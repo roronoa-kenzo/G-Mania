@@ -1,0 +1,942 @@
+{{> header}}
+
+    <!-- sidebar starts -->
+    <div class="sidebar">
+        <div class="sidebarOption justify-content-center">
+            <img src="/img/GroupBlkTrsp.png" class="w-50 text-center" alt="">
+        </div>
+        <a href="/"><div class="sidebarOption active">
+            <span class="material-icons"> home </span>
+            <h2>Home</h2>
+        </div></a>
+
+        <a href="bookmarks"><div class="sidebarOption">
+            <span class="material-icons"> bookmark_border </span>
+            <h2>Bookmarks</h2>
+        </div></a>
+        
+        {{#if user.UserRoles}}
+        <a href="admin"><div class="sidebarOption">
+            <span class="material-icons"> list_alt </span>
+            <h2>Admin</h2>
+        </div></a>
+        {{/if}}
+           <a href="profile"><div class="sidebarOption">
+        
+            <span  class="material-icons"> perm_identity </span>
+            <h2>Profile</h2>
+        </div></a>
+
+        <div class="sidebarOption">
+            <span class="material-icons"> more_horiz </span>
+            <h2>More</h2>
+        </div>
+        {{#if user}}
+
+
+        {{/if}}
+    </div>
+    <!-- sidebar ends -->
+    <!-- Display like count -->
+
+
+    <!-- feed starts navbar mobile -->
+    <div class="feed">
+        <div class="feed__header d-lg-block d-xl-none">
+  <div class="fixed-top">
+    <div class="collapse" id="navbarToggleExternalContent">
+      <div class="bg-light p-4">
+          {{#if user}}
+          <form action="/auth/logout" method="post" >
+            <button type="submit" class="BtnLogout">
+              <div class="sign">
+                <svg viewBox="0 0 512 512">
+                  <path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z">
+                  </path>
+                </svg>
+              </div>
+              <div class="text">Logout</div>
+            </button>
+          </form>
+              <hr>
+              {{#if user.UserRoles}}
+        <a class="d-flex" href="admin">
+            <span class="material-icons"> list_alt </span>
+            <h2>Admin</h2>
+            </a>
+        {{/if}}
+           <a  class="d-flex" href="profile">
+        
+            <span  class="material-icons"> perm_identity </span>
+            <h2>Profile</h2>
+      </a>
+          {{else}}
+            <button class="btn btn-primary btn-block btn-default btn-rounded mb-4" data-toggle="modal" onclick="loadRegister()" data-target="#modalRegisterForm">Register</button>
+            <button class="btn btn-primary btn-block btn-default btn-rounded mb-4" data-toggle="modal" onclick="loadLogin()" data-target="#modalSubscriptionForm">Login</button>
+          {{/if}}
+      </div>
+    </div>
+    <nav class="navbar navbar-light bg-light text-dark">Groupomania
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </nav>
+  </div>
+        </div>
+        <!-- tweetbox starts -->
+        {{#if user}}
+        <div class="tweetBox">
+            <form class="com" action="/auth/post?userId={{ user.idUser }}" method="POST" enctype="multipart/form-data">
+            <div class="tweetbox__input mt-3">
+                
+                <div class="UserProfile">
+                    <img class="circle" src="/uploads/{{user.UserProfileImage}}" alt="Profile Image" class="profileImage" />
+                </div>
+                <label for="imageInput">
+                <input type="file" id="imageInput" name="image" accept="image/*" onchange="previewImage(event)" style="display: none" />
+                </label>
+                <textarea class="textcom myTextarea" id="myTextarea"  name="messageText" placeholder="What's happening {{ user.UserName }}?" oninput="updateCharacterCount()" maxlength="280"></textarea>
+            </div>
+            <div class="d-flex under">
+                <div class="imagePreview">
+                <img id="preview" src=""/>
+                </div>
+                <div>
+                <label for="imageInput">
+                    <img class="material-icons addimg" src="/img/addimg.png" alt="">
+                </div>
+                </label>
+                
+
+                <div>
+                <p id="charCount">280 caractères restants</p>
+                </div>
+                <button type="submit" class="tweetBox__tweetButton">Post !</button>
+            </div>
+            </form>
+            <button class="btn btn-outline-info btn-lg"  id="emojiPickerBtn"><img src="/img/addemoji.svg" alt="Add A Emoji"></button>
+            <div id="emojiContainer"></div>
+        </div>
+        {{/if}}
+       
+        <!-- tweetbox ends -->
+        <!-- Emoji Picker Modal -->
+       <div class="modal" id="emojiPickerModal" tabindex="-1" role="dialog" aria-labelledby="emojiPickerModalLabel" aria-hidden="true" data-backdrop="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Emoji Picker</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="emoji-picker" id="emojiContainer">
+                <div class="emoji-picker">
+            <span class="emoji-picker" data-emoji="😀">😀</span>
+            <span class="emoji-picker" data-emoji="😃">😃</span>
+            <span class="emoji-picker" data-emoji="😄">😄</span>
+            <span class="emoji-picker" data-emoji="😁">😁</span>
+            <span class="emoji-picker" data-emoji="😆">😆</span>
+            <span class="emoji-picker" data-emoji="😅">😅</span>
+            <span class="emoji-picker" data-emoji="😂">😂</span>
+            <span class="emoji-picker" data-emoji="🤣">🤣</span>
+            <span class="emoji-picker" data-emoji="😊">😊</span>
+            <span class="emoji-picker" data-emoji="😇">😇</span>
+            <span class="emoji-picker" data-emoji="❤️">❤️</span>
+            <span class="emoji-picker" data-emoji="💔">💔</span>
+            <span class="emoji-picker" data-emoji="¯\_(ツ)_/¯">¯\_(ツ)_/¯</span>
+            <span class="emoji-picker" data-emoji="😍">😍</span>
+            <span class="emoji-picker" data-emoji="😉">😉</span>
+            <span class="emoji-picker" data-emoji="👍">👍</span>
+            <span class="emoji-picker" data-emoji="👏">👏</span>
+            <span class="emoji-picker" data-emoji="🎉">🎉</span>
+            <span class="emoji-picker" data-emoji="🔥">🔥</span>
+            <span class="emoji-picker" data-emoji="🙌">🙌</span>
+            <span class="emoji-picker" data-emoji="😎">😎</span>
+            <span class="emoji-picker" data-emoji="🤔">🤔</span>
+            <span class="emoji-picker" data-emoji="😘">😘</span>
+            <span class="emoji-picker" data-emoji="🤗">🤗</span>
+            <span class="emoji-picker" data-emoji="👌">👌</span>
+            <span class="emoji-picker" data-emoji="💻">💻</span>
+            <span class="emoji-picker" data-emoji="🕺">🕺</span>
+                    </div>
+
+
+                <!-- Add more emoji options here -->
+                </div>
+            </div>
+            </div>
+        </div>
+        </div>
+
+
+    
+
+        {{#each socketmessages}}
+            <div class="post__body mt-5">
+            <div class="post__header">
+                <div class="post__headerText AllPost">
+                    <div > 
+                        <img src="/uploads/{{this.UserProfileImage}}" class="circle"   alt="">
+                    </div>
+                    <div>
+                        <h3>
+                    @{{ this.UserName }}  
+                    {{#if this.UserRoles}}
+                    <span class="post__headerSpecial"
+                    ><span class="material-icons post__badge"> verified </span>@Admin</span
+                    >
+                    {{/if}}
+                </h3>
+                    </div>
+                </div>
+                <div class="post__headerDescription">
+                <p>{{ this.SocketMessage }}</p>
+                </div>
+            </div>
+            <div class="socketimg">
+                <img
+                src="/uploads/{{ this.MessageImage }}" alt="{{ this.MessageImage }}"
+            />
+            </div>
+            {{#if ../user}}
+            <div class="post__footer">
+                
+                <span class="spane" > <button  data-toggle="modal" onclick="loadComment()" data-target="#modalComment{{ this.idMessage }}" class="button btn">
+  <svg class="svg-icon" fill="none" height="22" viewBox="0 0 20 20" width="22" xmlns="http://www.w3.org/2000/svg"><g stroke="#fff" stroke-linecap="round" stroke-width="1.5"><path d="m6.66669 6.66667h6.66671"></path><path clip-rule="evenodd" d="m3.33331 5.00001c0-.92047.74619-1.66667 1.66667-1.66667h10.00002c.9205 0 1.6666.7462 1.6666 1.66667v6.66669c0 .9205-.7461 1.6666-1.6666 1.6666h-4.8274c-.1105 0-.21654.044-.29462.122l-2.50004 2.5c-.26249.2625-.71129.0766-.71129-.2945v-1.9108c0-.2301-.18655-.4167-.41667-.4167h-1.25c-.92048 0-1.66667-.7461-1.66667-1.6666z" fill-rule="evenodd"></path><path d="m6.66669 10h2.5"></path></g></svg>
+  <span class="lable"></span>
+                </button> </span>
+
+                <span class="Rreply">
+                  <button class="buttone btn text-dark" data-toggle="modal" onclick="loadReply()" data-target="#modalReply{{ this.idMessage }}"  >Read Reply
+   <svg viewBox="0 0 448 512" class="bell"><path d="M224 0c-17.7 0-32 14.3-32 32V49.9C119.5 61.4 64 124.2 64 200v33.4c0 45.4-15.5 89.5-43.8 124.9L5.3 377c-5.8 7.2-6.9 17.1-2.9 25.4S14.8 416 24 416H424c9.2 0 17.6-5.3 21.6-13.6s2.9-18.2-2.9-25.4l-14.9-18.6C399.5 322.9 384 278.8 384 233.4V200c0-75.8-55.5-138.6-128-150.1V32c0-17.7-14.3-32-32-32zm0 96h8c57.4 0 104 46.6 104 104v33.4c0 47.9 13.9 94.6 39.7 134.6H72.3C98.1 328 112 281.3 112 233.4V200c0-57.4 46.6-104 104-104h8zm64 352H224 160c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7s18.7-28.3 18.7-45.3z"></path></svg>
+                  </button>
+                </span>
+                
+                <form id="likeDislikeForm" action="/auth/LikeDislike" method="POST">
+  <input type="hidden" name="userId" value="{{ ../user.idUser }}">
+  <input type="hidden" name="messageId" value="{{ this.idMessage }}">
+  <span>
+    <div class="con-like" id="like">
+      <input id="likeCheckbox{{ this.idMessage }}" title="like" type="checkbox" class="like" name="like">
+    </div>
+  </span> 
+  {{#each ../likes}}
+  {{#ifCond this.PostLike  ../idMessage}}
+    <i class="text-success">{{ this.LikedCount }}</i>
+  {{/ifCond}}
+{{/each}}
+  
+  <label class="containerx">
+  <button type="submit" class="btn" name="action" value="like">
+    <svg class="svgx"id="Glyph" version="1.1" viewBox="0 0 32 32" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <path d="M29.845,17.099l-2.489,8.725C26.989,27.105,25.804,28,24.473,28H11c-0.553,0-1-0.448-1-1V13  c0-0.215,0.069-0.425,0.198-0.597l5.392-7.24C16.188,4.414,17.05,4,17.974,4C19.643,4,21,5.357,21,7.026V12h5.002  c1.265,0,2.427,0.579,3.188,1.589C29.954,14.601,30.192,15.88,29.845,17.099z" id="XMLID_254_">
+    </path>
+    <path d="M7,12H3c-0.553,0-1,0.448-1,1v14c0,0.552,0.447,1,1,1h4c0.553,0,1-0.448,1-1V13C8,12.448,7.553,12,7,12z   M5,25.5c-0.828,0-1.5-0.672-1.5-1.5c0-0.828,0.672-1.5,1.5-1.5c0.828,0,1.5,0.672,1.5,1.5C6.5,24.828,5.828,25.5,5,25.5z" id="XMLID_256_">
+    </path>
+    </svg>
+</button>
+</label>  
+  
+  {{#each ../dislikes}}
+  {{#ifCond this.PostDislike  ../idMessage}}
+    <i class="text-danger">{{ this.Disliked }}</i>
+  {{/ifCond}}
+{{/each}}
+
+  <label class="containerxx">
+    <button type="submit" class="btn" name="action" value="dislike">
+    <svg class="svgxx" id="Glyph" version="1.1" viewBox="0 0 32 32" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <path d="M2.156,14.901l2.489-8.725C5.012,4.895,6.197,4,7.528,4h13.473C21.554,4,22,4.448,22,5v14  c0,0.215-0.068,0.425-0.197,0.597l-5.392,7.24C15.813,27.586,14.951,28,14.027,28c-1.669,0-3.026-1.357-3.026-3.026V20H5.999  c-1.265,0-2.427-0.579-3.188-1.589C2.047,17.399,1.809,16.12,2.156,14.901z" id="XMLID_259_">
+    </path><path d="M25.001,20h4C29.554,20,30,19.552,30,19V5c0-0.552-0.446-1-0.999-1h-4c-0.553,0-1,0.448-1,1v14  C24.001,19.552,24.448,20,25.001,20z M27.001,6.5c0.828,0,1.5,0.672,1.5,1.5c0,0.828-0.672,1.5-1.5,1.5c-0.828,0-1.5-0.672-1.5-1.5  C25.501,7.172,26.173,6.5,27.001,6.5z" id="XMLID_260_">
+    </path>
+    </svg>
+    </button>
+  </label>
+                </form>
+
+              <script>
+                var likeDislikeForm = document.getElementById('likeDislikeForm');
+                var likeCheckbox = document.getElementById('likeCheckbox{{ this.idMessage }}');
+
+                likeCheckbox.addEventListener('change', function() {
+                  if (this.checked) {
+                    // Uncheck all other like checkboxes
+                    var otherLikeCheckboxes = document.querySelectorAll('.like:not(#' + this.id + ')');
+                    otherLikeCheckboxes.forEach(function(checkbox) {
+                      checkbox.checked = false;
+                    });
+                  }
+                });
+              </script>
+
+            </div>
+            {{/if}}
+            <div class="small text-light  bg-dark">
+                <i>{{ this.MessageDate }}</i>
+            </div>
+            </div>
+
+            <!-- Modal Commentaire -->
+    <form action="/auth/comment" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="userId" value="{{ ../user.idUser }}">
+    <input type="hidden" name="messageId" value="{{ this.idMessage }}">
+    
+    <div class="modal" id="modalComment{{ this.idMessage }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center border-white">
+        <button type="button" class="close" onclick="loadHome()" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="card">
+        <span class="title">
+          <button class="btn gap btn-primary ml-1 btn-sm" type="button">Comments</button>
+          </span>
+        <div id="ChangeBox">
+          <div class="initial-content">
+            <div class="comments">
+          <div class="comment-react">
+          </div>
+          <div class="comment-container">
+            <div class="user">
+              <div class="user-pic circle">
+                <img src="/uploads/{{this.UserProfileImage}}" class="circle2" alt="">
+                </svg>
+              </div>
+              <div class="user-info">
+                <span>{{this.UserName}}</span>
+                <p>{{this.MessageDate}}</p>
+              </div>
+            </div>
+            <p class="comment-content">
+              <div class="d-flex flex-column">
+                <div><img class="w-25"
+                src="/uploads/{{ this.MessageImage }}" alt="{{ this.MessageImage }}"/></div>
+                <div>{{ this.SocketMessage }}</div>
+              </div>
+            </p>
+          </div>
+        </div>
+        <div class="text-box">
+          <div class="box-container">
+            <textarea name="commentText" required placeholder="Reply"></textarea>
+            <div>
+              <div class="formatting d-flex">
+                <input type="file"  name="image" accept="image/*" class="ElFile" />
+                <button type="submit" class="send" title="Send">
+                  <svg fill="none" viewBox="0 0 24 24" height="18" width="18" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" stroke="#ffffff" d="M12 5L12 20"></path>
+                    <path stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" stroke="#ffffff" d="M7 9L11.2929 4.70711C11.6262 4.37377 11.7929 4.20711 12 4.20711C12.2071 4.20711 12.3738 4.37377 12.7071 4.70711L17 9"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+        <!-- Modal -->
+<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        
+        {{#each ../socketComments}}
+    {{#ifCond this.idMessage ../this.idMessage}}
+      <h3>{{ this.SocketComment }}</h3>
+    {{/ifCond}}
+  {{/each}}
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>    
+  
+      </div>
+    </div>
+  </div>
+    </div>
+    </form>
+    <!-- Modal Commentaire END-->
+    {{!-- Modal Reply --}}
+  <div class="modal" id="modalReply{{ this.idMessage }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center border-white">
+        <button type="button" class="close" onclick="loadHome()" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="card">
+        <span class="title">
+          <button class="btn gap btn-primary ml-1 btn-sm" type="button">Reply</button>
+        </span>
+        <div id="ChangeBox">
+          <div class="initial-content">
+            <div class="comments">
+          <div class="comment-react">
+          </div>
+          <div class="comment-container">
+            <div class="user">
+              <div class="user-pic circle">
+                <img src="/uploads/{{this.UserProfileImage}}" class="circle2" alt="">
+                </svg>
+              </div>
+              <div class="user-info">
+                <span>{{this.UserName}}</span>
+                <p>{{this.MessageDate}}</p>
+              </div>
+            </div>
+            <p class="comment-content">
+              <div class="d-flex flex-column">
+                <div><img class="w-25"
+                src="/uploads/{{ this.MessageImage }}" alt="{{ this.MessageImage }}"/></div>
+                <div>{{ this.SocketMessage }}</div>
+              </div>
+            </p>
+          </div>
+        </div>
+        <div class="text-box">
+          <div class="box-container">
+            {{#each ../socketComments}}
+              {{#ifCond this.idMessage ../this.idMessage}}
+              <div class="newcomment"><div class="user d-flex">
+                        <div class="user-pic circle">
+                          <img src="/uploads/{{this.UserProfileImage}}" class="circle2" alt="">
+                          </svg>
+                        </div>
+                        <div class="user-info">
+                          <span>{{this.UserName}}</span>
+                          <p>{{this.CommentDate}}</p>
+                        </div>
+
+                        {{#ifCond this.UserId  ../../user.idUser}}
+                        <form action="/auth/DeleteComment" method="POST">
+                            <input type="hidden" name="userId" value="{{ this.idUser }}">
+                            <input type="hidden" name="commentId" value="{{ this.idComment }}">
+                            <button type="submit" class="button btn-danger" name="action" value="dislike">
+                                Delete
+                             </button>
+                        </form>
+                        {{/ifCond}}
+                        
+                        
+              </div>
+                <p>{{ this.SocketComment }}</p>
+                <img src="/uploads/{{this.PostImg}}" class="w-75" alt="{{this.PostImg}}">
+              </div>
+
+              {{/ifCond}}
+          {{/each}}
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+    {{!-- Modal Reply END--}}
+
+        {{/each}}
+        
+    </div>
+    <!-- feed ends -->
+  
+    <!-- widgets starts -->
+    <div class="widgets">
+        <div class="widgets__widgetContainer">
+        <div class="text-center">
+        {{#if user}} 
+          <form action="/auth/logout" method="post" >
+            <button type="submit" class="BtnLogout">
+              <div class="sign">
+                <svg viewBox="0 0 512 512">
+                  <path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z">
+                  </path>
+                </svg>
+              </div>
+              <div class="text">Logout</div>
+            </button>
+          </form>
+
+
+
+        {{else}}
+            <button class="btn btn-primary btn-block btn-default btn-rounded mb-4" data-toggle="modal" onclick="loadRegister()" data-target="#modalRegisterForm">Register</button>
+        </div>
+        <div class="text-center">
+            <button class="btn btn-primary btn-block btn-default btn-rounded mb-4" data-toggle="modal" onclick="loadLogin()" data-target="#modalSubscriptionForm">Login</button>
+        </div>
+        {{/if}}
+    </div>
+
+
+    </div>
+    
+
+    <!-- widgets ends -->
+
+    <!-- Modal Register -->
+    <form action="/auth/register" method="POST" >
+        <div class="modal" id="modalRegisterForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold">Sign up</h4>
+                <button type="button" class="close" onclick="loadHome()" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body mx-3">
+                <div class="md-form mb-5">
+                    <i class="fas fa-user prefix grey-text"></i>
+                    <label id="name" data-error="wrong" data-success="right" for="orangeForm-name">Your name</label>
+                    <input type="text" name="name" required id="orangeForm-name" class="form-control validate">
+                </div>
+                <div class="md-form mb-5">
+                    <i class="fas fa-envelope prefix grey-text"></i>
+                    <label data-error="wrong" id="email" data-success="right" for="orangeForm-email">Your email</label>
+                    <input type="email" name="email"  required id="orangeForm-email" class="form-control validate">
+                </div>
+                <div class="md-form mb-4">
+                    <i class="fas fa-lock prefix grey-text"></i>
+                    <label data-error="wrong" data-success="right" pattern="/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.*\s).{12,}$/" id="password" required for="password-field">Your password</label>
+                    <input type="password" id="password-field" name="password" class="form-control validate">
+                    <div class="valid-checks hide">
+          <ul class="checklist">
+            <li class="a"><i class='bx bx-check'></i>Lowercase letter</li>
+            <li><i class='bx bx-check'></i>Uppercase letter</li>
+            <li><i class='bx bx-check'></i>Number</li>
+            <li><i class='bx bx-check'></i>At least 12 characters</li>
+            <li><i class='bx bx-check'></i>Special character</li>
+          </ul>
+                    </div>
+                </div>
+                <div class="md-form mb-4">
+                    <i class="fas fa-lock prefix grey-text"></i>
+                    <label data-error="wrong" data-success="right" id="passwordConfirm"  for="orangeForm-pass">Confirm Your password</label>
+                    <input type="password" id="orangeForm-pass"  required name="passwordConfirm" class="form-control validate">
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="submit" class="btn btn-deep-orange">Sign up</button>
+            </div>
+        </div>
+    </div>
+    </div>
+    </form>
+    <!-- Modal Register ends -->
+
+    <!--Modal Login-->
+    <form action="/auth/login" method="post">
+        <div class="modal" id="modalSubscriptionForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header text-center">
+            <h4 class="modal-title w-100 font-weight-bold">Subscribe</h4>
+                <button type="button" class="close" onclick="loadHome()" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body mx-3">
+            <div class="md-form mb-5">
+            <i class="fas fa-user prefix grey-text"></i>
+            <input type="email" id="form3" name="email"  class="form-control validate">
+            <label data-error="wrong" data-success="right" for="form3" >Your Email</label>
+        </div>
+
+        <div class="md-form mb-4">
+            <i class="fas fa-envelope prefix grey-text"></i>
+            <input type="password" id="form2" name="password" class="form-control validate">
+            <label data-error="wrong" data-success="right" for="form2">Your Password</label>
+        </div>
+
+        </div>
+        
+    <div class="modal-footer d-flex justify-content-center">
+        <button type="submit" class="btn btn-indigo">Send <i class="fas fa-paper-plane-o ml-1"></i></button>
+    </div>
+    </div>
+    </div>
+        </div>
+    </form>
+    <!--Modal Login Ends-->
+    
+    <!--Modal Logout Ends-->
+
+    
+    
+    {{!-- SnackBar --}}
+    {{#if message}}
+    <div id="snackbar">
+            <h4 class="alert alert-danger mt-4">{{message}}</h4>
+    </div>
+    <script>
+        showSnackbar("{{message}}");
+    </script>
+    {{/if}}
+
+    {{#if messages}}
+    <div id="snackbar">
+                <h4 class="alert alert-success mt-4">{{messages}}</h4>
+    </div>
+    <script>
+        showSnackbar("{{messages}}");
+    </script>
+    {{/if}}
+    {{!-- End of SnackBar --}}
+    
+
+    {{!-- JavaScript --}}
+    {{!-- Push State --}}
+    <script>
+    // DEFAULT CONTENT
+    var DOMAIN_NAME = 'http://localhost:3000';
+
+    function loadHome() {
+        history.pushState({}, "", DOMAIN_NAME + "/");
+    }
+    
+    function loadRegister() {
+        history.pushState({}, "", DOMAIN_NAME + "/register");
+    }
+
+    function loadLogin() {
+        history.pushState({}, "", DOMAIN_NAME + "/login");
+    }
+
+    
+
+    function loadComment() {
+        history.pushState({}, "", DOMAIN_NAME + "/comment");
+    }
+
+    function loadReply() {
+        history.pushState({}, "", DOMAIN_NAME + "/Reply");
+    }
+
+    </script>
+    {{!-- Compteur de Character --}}
+    <script>
+    function updateCharacterCount() {
+        let textarea = document.getElementById('myTextarea');
+        let imageInput = document.getElementById('imageInput');
+        let charCount = document.getElementById('charCount');
+        let submitButton = document.getElementsByClassName('tweetBox__tweetButton')[0];
+
+        let remainingChars = 280 - textarea.value.length;
+        charCount.textContent = remainingChars + ' caractères restants';
+
+        if (textarea.value.trim() === '' && (!imageInput.files || imageInput.files.length === 0)) {
+            submitButton.disabled = true;
+            submitButton.style.backgroundColor = "gray";
+        } else {
+            submitButton.disabled = false;
+            submitButton.style.backgroundColor = "#0069d9";
+        }
+    }
+
+    // Add event listener to image input
+    let imageInput = document.getElementById('imageInput');
+    imageInput.addEventListener('change', updateCharacterCount);
+    </script>
+    
+    {{!-- SnackBar --}}
+    <script>
+  function showSnackbar(message) {
+    var snackbar = document.getElementById("snackbar");
+    snackbar.innerText = message;
+    snackbar.classList.add("show");
+    setTimeout(function () {
+      snackbar.classList.remove("show");
+    }, 7000);
+  }
+
+  // Trigger the snackbar with the message from the controller
+  var message = "{{message}}";
+  var messages = "{{messages}}";
+
+  if (message) {
+    showSnackbar(message);
+  }
+
+  if (messages) {
+    showSnackbar(messages);
+  }
+    </script>
+    {{!-- Fonction d'envoie d'image du formulaire --}}
+    <script>
+  function previewImage(event) {
+    var imageInput = event.target;
+    var preview = document.getElementById("preview");
+
+    var file = imageInput.files[0];
+    var reader = new FileReader();
+
+    reader.onload = function (e) {
+      preview.src = e.target.result;
+    };
+
+    reader.readAsDataURL(file);
+  }
+    </script>
+    {{!-- Socket.io --}}
+    <script type="module">
+export default {
+  data() {
+    return {
+      socketmessages: [], // Initialize the socketmessages data property
+    };
+  },
+  mounted() {
+    // Connect to the Socket.io server
+    const socket = io();
+
+    // Listen for new messages from the server
+    socket.on('newMessage', (message) => {
+      this.displayMessage(message);
+    });
+
+    // Fetch messages from the server
+    fetch('/messages')
+      .then((response) => response.json())
+      .then((data) => {
+        this.socketmessages = data.socketmessages;
+
+        // Display the fetched messages
+        this.socketmessages.forEach((message) => {
+          this.displayMessage(message);
+        });
+      })
+      .catch((error) => {
+        console.error('Error fetching messages:', error);
+      });
+  },
+  methods: {
+    displayMessage(message) {
+      // Display the message in your component's template
+      console.log('New message:', message);
+    },
+  },
+};
+    </script>
+    {{!-- Emoji --}}
+    <script>
+  // Get the elements
+  const emojiPickerBtn = document.getElementById('emojiPickerBtn');
+  const textarea = document.getElementsByClassName('myTextarea')[0];
+
+  // Add click event listener to the emoji picker button
+  emojiPickerBtn.addEventListener('click', () => {
+    // Open the emoji picker
+    $('#emojiPickerModal').modal('show');
+  });
+
+  // Handle emoji selection
+  const emojiOptions = document.querySelectorAll('.emoji-picker');
+  emojiOptions.forEach((option) => {
+    option.addEventListener('click', (event) => {
+      // Get the selected emoji
+      const emoji = event.target.getAttribute('data-emoji');
+
+      if (emoji) {
+        // Insert the emoji into the textarea if it doesn't already exist
+        if (!textarea.value.includes(emoji)) {
+          const currentText = textarea.value;
+          const cursorPosition = textarea.selectionStart;
+          const newText = currentText.slice(0, cursorPosition) + emoji + currentText.slice(cursorPosition);
+          textarea.value = newText;
+        }
+      }
+
+      // Close the emoji picker modal
+      $('#emojiPickerModal').modal('hide');
+    });
+  });
+    </script>
+    {{!-- RegexJs --}}
+    <script>
+      let validationBox = document.querySelector(".valid-checks");
+      let passwordField = document.getElementById("password-field");
+      let checklist = document.querySelector(".checklist").getElementsByTagName("li");
+      let lowerCount = 0,
+        numberCount = 0,
+        upperCount = 0,
+        specialCount = 0;
+
+
+// focus and focusout events
+passwordField.addEventListener("focus", () => {
+  validationBox.classList.remove("hide");
+});
+
+passwordField.addEventListener("focusout", () => {
+  validationBox.classList.add("hide");
+});
+
+// checking conditions
+passwordField.addEventListener("input", () => {
+  let value = passwordField.value.trim();
+  let lastCharacter = value.slice(value.length - 1);
+  let index = checkLastCharacter(lastCharacter);
+
+  if (value.length !== 0) {
+    checklist[index].classList.add("checked");
+    passwordField.addEventListener("keydown", uncheckConditions);
+  } else {
+    passwordField.removeEventListener("keydown", uncheckConditions);
+    resetValues();
+  }
+
+  // checking for minimum 8 letters
+  if (value.length >= 12) {
+    checklist[3].classList.add("checked");
+  } else {
+    checklist[3].classList.remove("checked");
+  }
+
+  // checking for at least one special character
+  if (value.match(/[^a-zA-Z0-9]/)) {
+    checklist[4].classList.add("checked");
+  } else {
+    checklist[4].classList.remove("checked");
+  }
+});
+
+function uncheckConditions(event) {
+  let value = passwordField.value.trim();
+  let index = checkLastCharacter(value.slice(value.length - 1));
+
+  if (event.key === "Backspace") {
+    decrementCount(index);
+    checkCount();
+  } else {
+    incrementCount(index);
+  }
+}
+
+function checkLastCharacter(lastCharacter) {
+  // checking for number
+  if (!Number.isNaN(Number(lastCharacter))) {
+    return 2;
+  }
+  // checking for special character
+  else if (!/[a-zA-Z0-9]/.test(lastCharacter)) {
+    return 3;
+  }
+  // checking for upper case letters
+  else if (lastCharacter === lastCharacter.toUpperCase()) {
+    return 1;
+  }
+  // checking for lower case letter
+  else if (lastCharacter === lastCharacter.toLowerCase()) {
+    return 0;
+  }
+}
+
+function incrementCount(index) {
+  switch (index) {
+    case 0:
+      lowerCount++;
+      console.log("lower Count is ", lowerCount);
+      break;
+    case 1:
+      if (!passwordField.value.trim().match(/[a-zA-Z]/)) {
+        specialCount++;
+        console.log("special Count is ", specialCount);
+      } else {
+        upperCount++;
+        console.log("upper Count is ", upperCount);
+      }
+      break;
+    case 2:
+      numberCount++;
+      console.log("number Count is ", numberCount);
+      break;
+    case 3:
+      specialCount++;
+      console.log("special Count is ", specialCount);
+      break;
+  }
+}
+
+
+function decrementCount(index) {
+  switch (index) {
+    case 0:
+      lowerCount--;
+      console.log("lower Count is ", lowerCount);
+      break;
+    case 1:
+      upperCount--;
+      console.log("upper Count is ", upperCount);
+      break;
+    case 2:
+      numberCount--;
+      console.log("number Count is ", numberCount);
+      break;
+    case 4:
+      specialCount--;
+      console.log("special Count is ", specialCount);
+      break;
+  }
+}
+
+function checkCount() {
+  if (lowerCount <= 1) {
+    checklist[0].classList.remove("checked");
+    lowerCount = 0;
+  }
+
+  if (upperCount <= 1) {
+    checklist[1].classList.remove("checked");
+    upperCount = 0;
+  }
+
+  if (numberCount <= 1) {
+    checklist[2].classList.remove("checked");
+    numberCount = 0;
+  }
+
+  if (specialCount <= 0) {
+    checklist[4].classList.remove("checked");
+    specialCount = 0;
+  }
+}
+
+function resetValues() {
+  lowerCount = 0;
+  upperCount = 0;
+  numberCount = 0;
+  specialCount = 0;
+
+  for (let i = 0; i < checklist.length; i++) {
+    checklist[i].classList.remove("checked");
+  }
+}
+
+    </script>
+
+    {{!-- JavaScript END --}}
+    {{!-- Bibliothéque --}}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous">
+    </script>
+    <!-- Twemoji JavaScript -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/twemoji@latest/dist/twemoji.min.js"></script>
+{{> footer}}

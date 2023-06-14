@@ -1,0 +1,252 @@
+{{> header}}
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary mb-5">
+    <div class="flex-row d-flex">
+        <button type="button" class="navbar-toggler mr-2 " data-toggle="offcanvas" title="Toggle responsive left sidebar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a href="/"><p class="navbar-brand" href="">Admin Groupomania</p></a>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsingNavbar">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="navbar-collapse collapse" id="collapsingNavbar">
+    </div>
+</nav>
+<div class="container-fluid" id="main">
+    <div class="row row-offcanvas row-offcanvas-left">
+        <!--/col-->
+        <main class="col main pt-5 mt-5">
+
+            
+            <div class="row mb-3">
+                <div class="col-xl-6 col-sm-6 py-2">
+                    <div class="card bg-success text-white h-100">
+                        <div class="card-body bg-success">
+                            <div class="rotate">
+                                <i class="fa fa-user fa-4x"></i>
+                            </div>
+                            <h6 class="text-uppercase"Total >Users</h6>
+                            <h1 class="display-4">{{CountU}}</h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-sm-6 py-2">
+                    <div class="card text-white bg-danger h-100">
+                        <div class="card-body bg-danger">
+                            <div class="rotate">
+                                <i class="fa fa-list fa-4x"></i>
+                            </div>
+                            <h6 class="text-uppercase">Total Posts</h6>
+                            <h1 class="display-4">{{CountM}}</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/row-->
+            <div class="row my-4">
+                <div class="col-lg-12 col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead class="thead-inverse">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>UserName</th>
+                                    <th>UserEmail</th>
+                                    <th>UserPassword</th>
+                                    <th>UserProfilImage</th>
+                                    <th>UserRoles</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {{#each AllUser}}
+                                <tr>
+                                    <td>
+                                        <em>
+                                            {{this.idUser}}
+                                        </em>
+                                    </td>
+                                    <td>
+                                        <em>
+                                            {{this.UserName}}
+                                        </em>
+                                    </td>
+                                    <td>
+                                        <em>
+                                            {{this.UserEmail}}
+                                        </em>
+                                    </td>
+                                    <td>
+                                        <em>
+                                        {{this.UserPassword}}
+                                        </em>
+                                    </td>
+                                    <td>
+                                        <img class="w-25" src="/uploads/{{this.UserProfileImage}}" alt="{{this.UserProfileImage}}">
+                                    </td>
+                                    <td>
+                                        {{this.UserRoles}}
+                                    </td>
+                                    <td class="crud-actions">
+
+                                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#staticBackdrop{{this.idUser}}">
+                                        Message
+                                        </button> 
+
+                                        <button class="btn btn-primary btn-block btn-default btn-rounded mb-4" data-toggle="modal"data-target="#modalRegisterForm{{this.idUser}}">Edit</button>
+                                        
+                                        <!-- Messages -->
+                                                    <div class="modal fade" id="staticBackdrop{{this.idUser}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="staticBackdropLabel">This User Message And Comment</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        This User Message
+                                                        {{#each ../socketmessages}}
+                                                        {{#ifCond this.idUser  ../this.idUser }}
+                                                            <form class="d-flex justify-content-around flex-column" action="/auth/DeleteMessage" method="post">
+                                                            
+                                                                <input type="hidden" name="messageId" value="{{ this.idMessage }}">
+                                                                <em>{{this.SocketMessage}}</em>
+                                                                <img class="w-25" src="/uploads/{{this.MessageImage}}" alt="{{this.MessageImage}}">
+                                                                <button type="submit"  class="btn btn-danger">Delete</button>
+                                                            </form> 
+                                                        {{/ifCond}}
+                                                        {{/each}}
+                                                            This User Comment
+                                                            {{#each ../socketComments}}
+                                                            {{#ifCond this.UserId ../this.idUser }}
+                                                            <form action="/auth/DeleteComment"  class="d-flex justify-content-around flex-column" method="post">
+                                                                <input type="hidden" name="commentId" value="{{this.idComment}}">
+                                                                <em class="d-flex flex-column"> {{ this.SocketComment }}</em>
+                                                                <img class="w-25" src="/uploads/{{this.PostImg}}" alt="{{this.PostImg}}">
+                                                                <button type="submit"  class="btn btn-danger">Delete</button>
+                                                            </form>
+                                                            {{/ifCond}}
+                                                        {{/each}}
+                                                        
+                                                        
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                        <!-- Messages End -->
+
+                                        <!-- Modal Register -->
+                                        
+                                        <form action="/auth/AdminEdit" method="POST" >
+                                        <input type="hidden" name="UserId" value="{{this.idUser}}">
+                                            <div class="modal"  id="modalRegisterForm{{this.idUser}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header text-center">
+                                                    <h4 class="modal-title w-100 font-weight-bold">Sign up</h4>
+                                                    <button type="button" class="close" onclick="loadHome()" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body mx-3">
+                                                    <div class="md-form mb-5">
+                                                        <i class="fas fa-user prefix grey-text"></i>
+                                                        <label id="name" data-error="wrong" data-success="right" for="orangeForm-name">This User name</label>
+                                                        <input type="text" name="name" required id="orangeForm-name" class="form-control validate" value="{{this.UserName}}">
+                                                    </div>
+                                                    <div class="md-form mb-5">
+                                                        <i class="fas fa-envelope prefix grey-text"></i>
+                                                        <label data-error="wrong" id="email" data-success="right" for="orangeForm-email" >This User email</label>
+                                                        <input type="email" name="email"  required id="orangeForm-email" class="form-control validate" value="{{this.UserEmail}}">
+                                                    </div>
+                                                    <div class="md-form mb-4">
+                                                        <i class="fas fa-lock prefix grey-text"></i>
+                                                        <label data-error="wrong" data-success="right" pattern="/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.*\s).{12,}$/" id="password" required for="password-field">New password</label>
+                                                        <input type="text" id="password-field" name="password" class="form-control validate">
+                                                        <div class="valid-checks hide">
+                                            <ul class="checklist">
+                                                <li class="a"><i class='bx bx-check'></i>Lowercase letter</li>
+                                                <li><i class='bx bx-check'></i>Uppercase letter</li>
+                                                <li><i class='bx bx-check'></i>Number</li>
+                                                <li><i class='bx bx-check'></i>At least 12 characters</li>
+                                                <li><i class='bx bx-check'></i>Special character</li>
+                                            </ul>
+                                                        </div>
+                                                        <div class="md-form mb-5">
+                                                        <i class="fas fa-envelope prefix grey-text"></i>
+                                                        <label data-error="wrong" id="role" data-success="right" for="orangeForm-email" >This User Role</label>
+                                                        <input type="text" name="role"  id="orangeForm-email" class="form-control validate" value="{{this.UserRoles}}">
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer d-flex justify-content-center">
+                                                    <button type="submit" class="btn btn-deep-orange">Sign up</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                        </form>
+                                        <!-- Modal Register ends -->
+
+                                        <form action="/auth/AdminDelete" method="post">
+                                            <input type="hidden" name="UserId" value="{{this.idUser}}">
+                                            <button type="submit"  class="btn btn-danger">Delete</button>
+                                        </form> 
+                                    </td>
+                                    </tr>
+                                {{/each}}
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!--/row-->
+            
+
+    <script>
+    function showSnackbar(message) {
+    var snackbar = document.getElementById("snackbar");
+    snackbar.innerText = message;
+    snackbar.classList.add("show");
+    setTimeout(function () {
+    snackbar.classList.remove("show");
+    }, 10000);
+    }
+
+    var message = "{{message}}";
+    var messages = "{{messages}}";
+
+    if (message) {
+        showSnackbar(message);
+    }
+
+    if (messages) {
+        showSnackbar(messages);
+    }
+    </script>
+    <script>
+        $(document).ready(function() {
+    
+  $('[data-toggle=offcanvas]').click(function() {
+    $('.row-offcanvas').toggleClass('active');
+  });
+  
+});
+    </script>
+    <link rel="stylesheet" href="/css/admin.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous">
+    </script>
+    <!-- Twemoji JavaScript -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/twemoji@latest/dist/twemoji.min.js"></script>
+
+    
+{{> footer}}

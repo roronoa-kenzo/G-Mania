@@ -1,0 +1,373 @@
+{{> header }}
+
+<!-- sidebar starts -->
+    <div class="sidebar">
+        <div class="sidebarOption justify-content-center">
+            <img src="/img/GroupBlkTrsp.png" class="w-50 text-center" alt="">
+        </div>
+        <a href="/"><div class="sidebarOption">
+            <span class="material-icons"> home </span>
+            <h2>Home</h2>
+        </div></a>
+
+        <a href="bookmarks"><div class="sidebarOption">
+            <span class="material-icons"> bookmark_border </span>
+            <h2>Bookmarks</h2>
+        </div></a>
+        
+        {{#if user.UserRoles}}
+        <a href="admin"><div class="sidebarOption">
+            <span class="material-icons"> list_alt </span>
+            <h2>Admin</h2>
+        </div></a>
+        {{/if}}
+           <a href="profile"><div class="sidebarOption active">
+        
+            <span  class="material-icons"> perm_identity </span>
+            <h2>Profile</h2>
+        </div></a>
+
+        <div class="sidebarOption">
+            <span class="material-icons"> more_horiz </span>
+            <h2>More</h2>
+        </div>
+        {{#if user}}
+
+        <button class="sidebar__tweet" data-toggle="modal" onclick="loadPushState()" data-target="#modalPost">Post</button>
+
+        {{/if}}
+    </div>
+    <!-- sidebar ends -->
+
+    <!-- feed starts -->
+        <div class="feed">
+        <div class="feed__header">
+            <h2>Home</h2>
+        </div>
+
+        <!-- tweetbox starts -->
+        <div class="profile-head">
+            <img src="img/back.jpg" alt="">
+            <div class="profile-head-info">
+                <img class="circle3" src="/uploads/{{ user.UserProfileImage }}" alt="">
+                <h4>{{ user.UserName }}</h4>
+                <a href="edit"><input class="twitter-btn" type="button" value="Edit Profil" class="sidebarOption"></a>
+            </div>          
+        </div>
+
+        <hr>
+        
+        
+         {{#each socketmessages}}
+            {{#ifCond this.idUser ../user.idUser}} 
+            <div class="post__body">
+              <div class="post__header">
+                <div class="post__headerText AllPost">
+                    <div > 
+                        <img src="/uploads/{{this.UserProfileImage}}" class="circle"   alt="">
+                    </div>
+                    <div>
+                      <h3>
+                         @{{ this.UserName }}  
+                         {{#if this.UserRoles}}
+                            <span class="post__headerSpecial"> 
+                            <span class="material-icons post__badge"> verified </span>@Admin</span>
+                         {{/if}}
+                      </h3>
+                </div>
+              </div>
+              <div class="post__headerDescription">
+                <p>{{ this.SocketMessage }}</p>
+              </div>
+            </div>
+            <div class="socketimg">
+                <img src="/uploads/{{ this.MessageImage }}" alt="{{ this.MessageImage }}"/>
+            </div>
+            {{#if ../user}}
+            <div class="post__footer">
+                
+              <button class="btn btn-info  btn-rounded mb-4" data-toggle="modal"  data-target="#modalEdit{{this.idMessage}}">Edit</button>
+
+              <!-- Edit Modal -->
+                <div class="modal" id="modalEdit{{this.idMessage}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+                  <form action="/auth/EditMessage" method="POST" enctype="multipart/form-data">
+                  <input type="hidden" name="userId" value="{{ this.idUser }}">
+                  <input type="hidden" name="messageId" value="{{ this.idMessage }}">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header text-center">
+                        <h4 class="modal-title w-100 font-weight-bold">Edit Message</h4>
+                        <button type="button" class="close" onclick="loadHome()" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body mx-3">
+                      <div class="md-form mb-5">
+                          <i class="fas fa-user prefix grey-text"></i> 
+                          <label id="name" data-error="wrong" data-success="right" for="orangeForm-name">Edit Message</label>
+                          <input type="text" name="content" value="{{this.SocketMessage}}" required id="orangeForm-name" class="form-control validate">
+                      </div>
+                      <div class="md-form mb-4">
+                          <i class="fas fa-lock prefix grey-text"></i>
+                          <label data-error="wrong" data-success="right"  id="image"  for="orangeForm-pass">Current Img</label>
+                          <img src="/uploads/{{this.MessageImage}}" class="w-25" alt="No Image Was Send">
+                      </div>
+                      <div class="md-form mb4">
+                        <label data-error="wrong" data-success="right" id="image"  for="orangeForm-pass">Old Img</label>
+                        <input type="file" id="orangeForm-pass"   name="image" class="form-control validate">
+                      </div>
+                  </div>
+                  <div class="modal-footer d-flex justify-content-center">
+                      <button type="submit" class="btn btn-deep-orange">Sign up</button>
+                  </div>
+              </div>
+          </div>
+              </div>
+              </form>
+              <!-- Edit Modal End-->
+
+                <span class="Rreply">
+                  <button class="buttone btn text-dark" data-toggle="modal" onclick="loadReply()" data-target="#modalReply{{ this.idMessage }}"  >Read Reply
+                     <svg viewBox="0 0 448 512" class="bell"><path d="M224 0c-17.7 0-32 14.3-32 32V49.9C119.5 61.4 64 124.2 64 200v33.4c0 45.4-15.5 89.5-43.8 124.9L5.3 377c-5.8 7.2-6.9 17.1-2.9 25.4S14.8 416 24 416H424c9.2 0 17.6-5.3 21.6-13.6s2.9-18.2-2.9-25.4l-14.9-18.6C399.5 322.9 384 278.8 384 233.4V200c0-75.8-55.5-138.6-128-150.1V32c0-17.7-14.3-32-32-32zm0 96h8c57.4 0 104 46.6 104 104v33.4c0 47.9 13.9 94.6 39.7 134.6H72.3C98.1 328 112 281.3 112 233.4V200c0-57.4 46.6-104 104-104h8zm64 352H224 160c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7s18.7-28.3 18.7-45.3z"></path></svg>
+                  </button>
+                </span>
+              
+                
+                <form action="/auth/DeleteMessage" method="POST">
+                  <input type="hidden" name="userId" value="{{ this.idUser }}">
+                  <input type="hidden" name="messageId" value="{{ this.idMessage }}">
+                  <button type="submit" class="button btn-danger" name="action" value="dislike">
+                    Delete
+                  </button>
+                  
+                </form>
+  
+
+            </div>
+            {{/if}}
+            <div class="small text-light  bg-dark">
+                <i>{{ this.MessageDate }}</i>
+            </div>
+            </div>
+            
+
+            <!-- Modal Commentaire -->
+    <form action="/auth/comment" method="post">
+    <input type="hidden" name="userId" value="{{ ../user.idUser }}">
+    <input type="hidden" name="messageId" value="{{ this.idMessage }}">
+    <div class="modal" id="modalComment{{ this.idMessage }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center border-white">
+        <button type="button" class="close" onclick="loadHome()" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="card">
+        <span class="title">
+          <button class="btn gap btn-primary ml-1 btn-sm" type="button">Comments</button>
+          </span>
+        <div id="ChangeBox">
+          <div class="initial-content">
+            <div class="comments">
+          <div class="comment-react">
+          </div>
+          <div class="comment-container">
+            <div class="user">
+              <div class="user-pic circle">
+                <img src="/uploads/{{this.UserProfileImage}}" class="circle2" alt="">
+                </svg>
+              </div>
+              <div class="user-info">
+                <span>{{this.UserName}}</span>
+                <p>{{this.MessageDate}}</p>
+              </div>
+            </div>
+            <p class="comment-content">
+              <div class="d-flex flex-column">
+                <div><img class="w-25"
+                src="/uploads/{{ this.MessageImage }}" alt="{{ this.MessageImage }}"/></div>
+                <div>{{ this.SocketMessage }}</div>
+              </div>
+            </p>
+          </div>
+        </div>
+        <div class="text-box">
+          <div class="box-container">
+            <textarea name="commentText" required placeholder="Reply"></textarea>
+            <div>
+              <div class="formatting">
+                
+                <button type="submit" class="send" title="Send">
+                  <svg fill="none" viewBox="0 0 24 24" height="18" width="18" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" stroke="#ffffff" d="M12 5L12 20"></path>
+                    <path stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" stroke="#ffffff" d="M7 9L11.2929 4.70711C11.6262 4.37377 11.7929 4.20711 12 4.20711C12.2071 4.20711 12.3738 4.37377 12.7071 4.70711L17 9"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+        
+            
+        <!-- Modal -->
+<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        
+        {{#each ../socketComments}}
+    {{#ifCond this.idMessage ../this.idMessage}}
+      <h3>{{ this.SocketComment }}</h3>
+    {{/ifCond}}
+  {{/each}}
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>    
+  
+      </div>
+    </div>
+  </div>
+    </div>
+    </form>
+    <!-- Modal Commentaire END-->
+    {{!-- Modal Reply --}}
+  <div class="modal" id="modalReply{{ this.idMessage }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center border-white">
+        <button type="button" class="close" onclick="loadHome()" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="card">
+        <span class="title">
+          <button class="btn gap btn-primary ml-1 btn-sm" type="button">Reply</button>
+        </span>
+        <div id="ChangeBox">
+          <div class="initial-content">
+            <div class="comments">
+          <div class="comment-react">
+          </div>
+          <div class="comment-container">
+            <div class="user">
+              <div class="user-pic circle">
+                <img src="/uploads/{{this.UserProfileImage}}" class="circle2" alt="">
+                </svg>
+              </div>
+              <div class="user-info">
+                <span>{{this.UserName}}</span>
+                <p>{{this.MessageDate}}</p>
+              </div>
+            </div>
+            <p class="comment-content">
+              <div class="d-flex flex-column">
+                <div><img class="w-25"
+                src="/uploads/{{ this.MessageImage }}" alt="{{ this.MessageImage }}"/></div>
+                <div>{{ this.SocketMessage }}</div>
+              </div>
+            </p>
+          </div>
+        </div>
+        <div class="text-box">
+          <div class="box-container">
+            {{#each ../socketComments}}
+              {{#ifCond this.idMessage ../this.idMessage}}
+              <div class="newcomment"><div class="user d-flex">
+                        <div class="user-pic circle">
+                          <img src="/uploads/{{this.UserProfileImage}}" class="circle2" alt="">
+                          </svg>
+                        </div>
+                        <div class="user-info">
+                          <span>{{this.UserName}}</span>
+                          <p>{{this.CommentDate}}</p>
+                        </div>
+              </div>
+                <p>{{ this.SocketComment }}</p></div>
+              
+              {{/ifCond}}
+          {{/each}}
+        
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+    {{!-- Modal Reply END--}}
+         {{/ifCond}}
+        {{/each}}
+        
+    </div>
+    <!-- feed ends -->
+        
+    <!-- tweetbox ends -->
+
+    <!--Modal Post -->
+    <div class="modal" id="modalPost" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header text-center border-white">
+                <button type="button" class="close" onclick="loadHome()" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="md-form mb-4">
+            <form class="com" action="/auth/post?userId={{ user.idUser }}" method="POST" enctype="multipart/form-data">
+            <div class="tweetbox__input">
+                
+                <div class="UserProfile">
+                    <img class="rounded" src="/uploads/{{user.UserProfileImage}}" alt="Profile Image" class="profileImage" />
+                </div>
+                <label for="imageInput">
+                <input type="file" id="imageInput" name="image" accept="image/*" onchange="previewImage(event)" style="display: none" />
+                </label>
+                <textarea class="textcom" id="myTextarea" name="messageText" placeholder="What's happening {{ user.UserName }}?" oninput="updateCharacterCount()" maxlength="280"></textarea>
+            </div>
+            <div class="d-flex under">
+                <div class="imagePreview">
+                <img id="preview" src=""/>
+                </div>
+                <div>
+                <label for="imageInput">
+                    <img class="material-icons addimg" src="/img/addimg.png" alt="">
+                </div>
+                </label>
+
+                <div>
+                <p id="charCount">280 caractères restants</p>
+                </div>
+                <button type="submit" class="tweetBox__tweetButton">Post !</button>
+            </div>
+            </form>
+        </div>
+        </div>
+    </div>
+    </div>
+    <!--Modal Post End -->
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous">
+    </script>
+    <!-- Twemoji JavaScript -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/twemoji@latest/dist/twemoji.min.js"></script>
+{{> footer}}

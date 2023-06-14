@@ -1,0 +1,182 @@
+{{> header }}
+
+
+
+<!-- sidebar starts -->
+    <div class="sidebar">
+        <div class="sidebarOption justify-content-center">
+            <img src="/img/GroupBlkTrsp.png" class="w-50 text-center" alt="">
+        </div>
+        <a href="/"><div class="sidebarOption active">
+            <span class="material-icons"> home </span>
+            <h2>Home</h2>
+        </div></a>
+
+        <div class="sidebarOption">
+            <span class="material-icons"> bookmark_border </span>
+            <h2>Bookmarks</h2>
+        </div>
+        
+        {{#if admin}}
+        <a href="admin"><div class="sidebarOption">
+            <span class="material-icons"> list_alt </span>
+            <h2>Admin</h2>
+        </div></a>
+        {{/if}}
+           <a href="profile"><div class="sidebarOption">
+        
+            <span  class="material-icons"> perm_identity </span>
+            <h2>Profile</h2>
+        </div></a>
+
+        <div class="sidebarOption">
+            <span class="material-icons"> more_horiz </span>
+            <h2>More</h2>
+        </div>
+        {{#if user}}
+
+        <button class="sidebar__tweet" data-toggle="modal" onclick="loadPushState()" data-target="#modalPost">Post</button>
+
+        {{/if}}
+    </div>
+    <!-- sidebar ends -->
+
+    <!-- feed starts -->
+        <div class="feed">
+        <div class="feed__header">
+            <h2>Home</h2>
+        </div>
+
+        <!-- tweetbox starts -->
+        <div class="profile-head">
+            <img src="img/back.jpg" alt="">
+            <div class="profile-head-info">
+                <img class="circle3" src="/uploads/{{ user.UserProfileImage }}" alt="">
+                <h4>{{ user.UserName }}</h4>
+            </div>        
+        </div>
+
+        <hr>
+        
+        <form action="/auth/ProfilPic" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="userId" value="{{ user.idUser }}">
+        <input type="hidden" name="userImg" value="{{ user.UserProfileImage }}">
+        
+            <h3 class="edit-h3">Change Profile Pic</h3>
+            <input class="pic-btn" type="file" name="image"></input>
+            <input class="pic-btn2" type="submit" ></input>
+        </form>
+        <hr>
+        <a class="a-button" data-toggle="modal" onclick="loadEmail()" data-target="#modalUpdateForm"><h3 class="edit-h3">Change your Email/Password<h3></a>        
+
+        <form action="/auth/Delete" method="post">
+            <input type="hidden" name="UserId" value="{{ user.idUser }}">
+            <input type="submit" class="pic-btn" value="Delete your account">
+            </input>
+        </form>
+
+        <form action="/auth/UpdateEmail" method="POST">
+        <div class="modal" id="modalUpdateForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header text-center">
+            <h4 class="modal-title w-100 font-weight-bold">Change Email/Password</h4>
+                <button type="button" class="close" onclick="loadHome()" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body mx-3">
+            <div class="md-form mb-5">
+            <i class="fas fa-user prefix grey-text"></i>
+            <input type="email" id="form3" name="email"  class="form-control validate">
+            <label data-error="wrong" data-success="right" for="form3" >Your Email</label>
+        </div>
+
+        <div class="md-form mb-4">
+            <i class="fas fa-envelope prefix grey-text"></i>
+            <input type="password" id="form2" name="password" class="form-control validate">
+            <label data-error="wrong" data-success="right" for="form2">Your Password</label>
+        </div>
+
+        </div>
+    <div class="modal-footer d-flex justify-content-center">
+        <button type="submit" class="btn btn-indigo">Send <i class="fas fa-paper-plane-o ml-1"></i></button>
+    </div>
+    </div>
+    </div>
+        </div>
+        </form>
+
+        
+
+
+        {{#if message}}
+    <div id="snackbar">
+            <h4 class="alert alert-danger mt-4">{{message}}</h4>
+    </div>
+    <script>
+        showSnackbar("{{message}}");
+    </script>
+    {{/if}}
+
+    {{#if messages}}
+    <div id="snackbar">
+                <h4 class="alert alert-success mt-4">{{messages}}</h4>
+    </div>
+    <script>
+        showSnackbar("{{messages}}");
+    </script>
+    {{/if}}
+        
+    <!-- tweetbox ends -->    
+
+    <script>
+    // DEFAULT CONTENT
+    var DOMAIN_NAME = 'http://localhost:3000';
+
+    function loadHome() {
+        history.pushState({}, "", DOMAIN_NAME + "/");
+    }
+    
+    function loadPassword() {
+        history.pushState({}, "", DOMAIN_NAME + "/password");
+    }
+
+    function loadEmail() {
+        history.pushState({}, "", DOMAIN_NAME + "/email");
+    }
+
+    function loadName() {
+        history.pushState({}, "", DOMAIN_NAME + "/name");
+    }
+    
+    
+    
+  function showSnackbar(message) {
+    var snackbar = document.getElementById("snackbar");
+    snackbar.innerText = message;
+    snackbar.classList.add("show");
+    setTimeout(function () {
+      snackbar.classList.remove("show");
+    }, 10000);
+  }
+
+  // Trigger the snackbar with the message from the controller
+  var message = "{{message}}";
+  var messages = "{{messages}}";
+
+  if (message) {
+    showSnackbar(message);
+  }
+
+  if (messages) {
+    showSnackbar(messages);
+  }
+    
+
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.min.js" integrity="sha512-H5JT7qJq1sP+qLThb8Eun8KU7Kgc20vTDh6KUqCIEjmtkjwTcqLxZHX1m/67PO7FLxY0AxZU61zBLvZbvdw0ZQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+
+{{> footer}}
