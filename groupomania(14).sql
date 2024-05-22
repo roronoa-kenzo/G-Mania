@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `commentaires` (
   PRIMARY KEY (`idComment`),
   KEY `idUser` (`idUser`),
   KEY `idMessage` (`idMessage`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `commentaires`
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `dislikes` (
   PRIMARY KEY (`idDislike`),
   KEY `UserDislike` (`UserDislike`),
   KEY `PostDislike` (`PostDislike`)
-) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `dislikes`
@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `likes` (
   PRIMARY KEY (`idLike`),
   KEY `UserLike` (`UserLike`),
   KEY `PostLike` (`PostLike`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `likes`
@@ -119,7 +119,7 @@ CREATE TABLE IF NOT EXISTS `messages` (
   `MessageImage` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`idMessage`),
   KEY `idUser` (`idUser`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `messages`
@@ -151,7 +151,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `UserRoles` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`idUser`),
   UNIQUE KEY `UserEmail_UNIQUE` (`UserEmail`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `users`
